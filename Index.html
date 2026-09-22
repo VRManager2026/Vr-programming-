@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>VR Programming — Coaching SaaS</title>
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#000000">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <!-- Ambient Neon Background Glows -->
+  <div class="glow-sphere glow-1"></div>
+  <div class="glow-sphere glow-2"></div>
+
+  <!-- Dynamic Island -->
+  <aside class="dynamic-island-wrapper">
+    <div class="dynamic-island" id="dynamicIsland">
+      <div class="island-collapsed" id="islandCollapsed">
+        <div class="island-left">
+          <span class="pulse-dot"></span>
+          <span class="island-text" id="islandStatusText">VR Engine Ready</span>
+        </div>
+        <div class="island-right">
+          <svg class="island-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg>
+        </div>
+      </div>
+      <div class="island-expanded" id="islandExpanded">
+        <div class="island-banner">
+          <span class="badge neon-badge" id="islandBadge">AI Assistant</span>
+          <button class="close-btn" id="closeIslandBtn">&times;</button>
+        </div>
+        <p class="island-message" id="islandDetailedMessage">Listening for voice instructions...</p>
+      </div>
+    </div>
+  </aside>
+
+  <!-- App Wrapper (Mobile-First Shell) -->
+  <div class="app-shell">
+    
+    <!-- Header -->
+    <header class="app-header glass-card">
+      <div class="header-brand">
+        <div class="vr-logo">
+          <svg viewBox="0 0 40 40" class="logo-svg">
+            <defs>
+              <linearGradient id="vrGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#00f0ff" />
+                <stop offset="100%" stop-color="#7000ff" />
+              </linearGradient>
+            </defs>
+            <rect x="2" y="2" width="36" height="36" rx="10" fill="#050508" stroke="url(#vrGrad)" stroke-width="2"/>
+            <path d="M10 14L16 26L22 14" stroke="#00f0ff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M22 14H28C30.2 14 31 15.5 31 17.5C31 19.5 30 21 28 21H22M27 21L31 26" stroke="#00f0ff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+        <div class="brand-text">
+          <h1 id="topInstituteTitle">VR Programming</h1>
+          <span class="sub-text" id="userRoleBadge">Connecting...</span>
+        </div>
+      </div>
+
+      <div class="header-actions">
+        <button class="icon-btn neon-glow-hover" id="aiVoiceTrigger" title="Voice AI">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>
+        </button>
+        <div class="avatar-slot" id="authAvatarSlot">
+          <button class="btn-primary-mini" id="googleLoginBtn">Login</button>
+        </div>
+      </div>
+    </header>
+
+    <!-- Main Screens Viewport -->
+    <main class="main-viewport" id="mainViewport">
+
+      <!-- View: Home / Dashboard -->
+      <section class="screen active" id="view-home">
+        <!-- AI Bar Quick Query -->
+        <div class="ai-quick-input glass-card">
+          <div class="ai-input-pill">
+            <svg class="ai-sparkle" viewBox="0 0 24 24" fill="none" stroke="#00f0ff" stroke-width="2"><path d="M12 2L15 8L21 11L15 14L12 20L9 14L3 11L9 8L12 2Z"/></svg>
+            <input type="text" id="aiQueryInput" placeholder="Poochho: 'Kaun absent hai?', 'Aaj kitne payment hue?'">
+            <button id="aiSubmitBtn" class="pill-btn">Ask</button>
+          </div>
+        </div>
+
+        <!-- Metrics Grid -->
+        <div class="metrics-grid">
+          <div class="metric-card glass-card">
+            <span class="metric-label">Total Students</span>
+            <div class="metric-num-wrap">
+              <span class="metric-num" id="statTotalStudents">0</span>
+              <span class="badge-mini neon-blue">Active</span>
+            </div>
+          </div>
+          <div class="metric-card glass-card">
+            <span class="metric-label">Today's Present</span>
+            <div class="metric-num-wrap">
+              <span class="metric-num green-glow" id="statPresentToday">0</span>
+              <span class="badge-mini green-pill">Present</span>
+            </div>
+          </div>
+          <div class="metric-card glass-card">
+            <span class="metric-label">Today's Absent</span>
+            <div class="metric-num-wrap">
+              <span class="metric-num red-glow" id="statAbsentToday">0</span>
+              <span class="badge-mini red-pill">Absent</span>
+            </div>
+          </div>
+          <div class="metric-card glass-card">
+            <span class="metric-label">Today Collection</span>
+            <div class="metric-num-wrap">
+              <span class="metric-num cyan-glow" id="statTodayCollection">₹0</span>
+            </div>
+          </div>
+          <div class="metric-card glass-card">
+            <span class="metric-label">Pending Dues</span>
+            <div class="metric-num-wrap">
+              <span class="metric-num orange-glow" id="statPendingFees">₹0</span>
+            </div>
+          </div>
+          <div class="metric-card glass-card">
+            <span class="metric-label">Monthly Revenue</span>
+            <div class="metric-num-wrap">
+              <span class="metric-num purple-glow" id="statMonthlyRevenue">₹0</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Quick Attendance Snapshot -->
+        <div class="section-card glass-card">
+          <div class="card-head">
+            <h3>Quick Attendance</h3>
+            <span class="badge" id="todayDateLabel">Today</span>
+          </div>
+          <div class="attendance-list-compact" id="compactAttendanceList">
+            <p class="empty-hint">Students load ho rahe hain...</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- View: Students List -->
+      <section class="screen" id="view-students">
+        <div class="search-filter-row">
+          <input type="search" id="studentSearchInput" class="custom-input" placeholder="Search by name, ID, or phone...">
+          <select id="classFilterSelect" class="custom-select">
+            <option value="ALL">All Classes</option>
+            <option value="Class 1">Class 1</option>
+            <option value="Class 2">Class 2</option>
+            <option value="Class 3">Class 3</option>
+            <option value="Class 4">Class 4</option>
+            <option value="Class 5">Class 5</option>
+            <option value="Class 6">Class 6</option>
+            <option value="Class 7">Class 7</option>
+            <option value="Class 8">Class 8</option>
+            <option value="Class 9">Class 9</option>
+            <option value="Class 10">Class 10</option>
+            <option value="Class 11">Class 11</option>
+            <option value="Class 12">Class 12</option>
+          </select>
+        </div>
+        <div class="students-container" id="studentsList"></div>
+      </section>
+
+      <!-- View: Add Student -->
+      <section class="screen" id="view-add-student">
+        <div class="form-container glass-card">
+          <h2>Register New Student</h2>
+          <form id="studentRegistrationForm">
+            <div class="form-group">
+              <label>Student Full Name *</label>
+              <input type="text" id="inpStudentName" class="custom-input" placeholder="e.g. Aman Sharma" required>
+            </div>
+            <div class="form-group-row">
+              <div class="form-group">
+                <label>Class *</label>
+                <select id="inpStudentClass" class="custom-select" required>
+                  <option value="Class 1">Class 1</option>
+                  <option value="Class 2">Class 2</option>
+                  <option value="Class 3">Class 3</option>
+                  <option value="Class 4">Class 4</option>
+                  <option value="Class 5">Class 5</option>
+                  <option value="Class 6">Class 6</option>
+                  <option value="Class 7">Class 7</option>
+                  <option value="Class 8">Class 8</option>
+                  <option value="Class 9">Class 9</option>
+                  <option value="Class 10">Class 10</option>
+                  <option value="Class 11">Class 11</option>
+                  <option value="Class 12">Class 12</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label>Batch *</label>
+                <input type="text" id="inpStudentBatch" class="custom-input" placeholder="Morning / 8 AM" required>
+              </div>
+            </div>
+            <div class="form-group">
+              <label>Guardian / Father's Name *</label>
+              <input type="text" id="inpGuardian" class="custom-input" placeholder="Guardian Name" required>
+            </div>
+            <div class="form-group-row">
+              <div class="form-group">
+                <label>Phone / WhatsApp *</label>
+                <input type="tel" id="inpPhone" class="custom-input" placeholder="10 digit number" pattern="[0-9]{10}" required>
+              </div>
+              <div class="form-group">
+                <label>Village / Area</label>
+                <input type="text" id="inpVillage" class="custom-input" placeholder="Village / Town">
+              </div>
+            </div>
+            <div class="form-group-row">
+              <div class="form-group">
+                <label>Custom Monthly Fee (₹) *</label>
+                <input type="number" id="inpMonthlyFee" class="custom-input" placeholder="500" min="0" required>
+              </div>
+              <div class="form-group">
+                <label>Joining Date</label>
+                <input type="date" id="inpJoinDate" class="custom-input">
+              </div>
+            </div>
+            <div class="form-group">
+              <label>Photo URL / Avatar Seed</label>
+              <input type="url" id="inpPhotoUrl" class="custom-input" placeholder="https://... or leave blank for VR avatar">
+            </div>
+            <button type="submit" class="btn-neon-action">Save & Enroll Student</button>
+          </form>
+        </div>
+      </section>
+
+      <!-- View: Fee Management -->
+      <section class="screen" id="view-fees">
+        <div class="glass-card fee-actions-card">
+          <div class="card-head">
+            <h3>Fee & Payment Management</h3>
+            <button class="pill-btn neon-blue" id="openCollectFeeModalBtn">+ Collect Fee</button>
+          </div>
+          <div class="fee-filter-tabs">
+            <button class="filter-tab active" data-fee-filter="ALL">All Records</button>
+            <button class="filter-tab" data-fee-filter="DUE">Dues Only</button>
+            <button class="filter-tab" data-fee-filter="PAID">Paid Only</button>
+          </div>
+        </div>
+        <div class="fee-transactions-list" id="feeTransactionsList"></div>
+      </section>
+
+      <!-- View: Settings & Multi-Coaching -->
+      <section class="screen" id="view-settings">
+        <!-- Institute Config -->
+        <div class="glass-card mb-20">
+          <h3>Institute Profile</h3>
+          <div class="settings-profile-info">
+            <p><strong>Name:</strong> <span id="setInstName">—</span></p>
+            <p><strong>Owner:</strong> <span id="setInstOwner">—</span></p>
+            <p><strong>Phone:</strong> <span id="setInstPhone">—</span></p>
+            <p><strong>Address:</strong> <span id="setInstAddress">—</span></p>
+          </div>
+        </div>
+
+        <!-- Subscription & Upgrade -->
+        <div class="glass-card mb-20 premium-glass-card">
+          <div class="card-head">
+            <span class="badge neon-badge" id="subStatusBadge">Free Tier</span>
+            <span class="founder-badge" id="founderIndicator" style="display:none;">Founder Account Active</span>
+          </div>
+          <h2 class="sub-heading">VR Unlimited Premium</h2>
+          <p class="sub-desc">Free limit: 10 students max. Upgrade to unlock unlimited coaching students, multi-device sync, and VR AI Manager.</p>
+          <div class="sub-price">₹499 <span>/ month</span></div>
+          <button class="btn-neon-action" id="upgradePayBtn">Upgrade Now (UPI / Cards)</button>
+        </div>
+
+        <!-- Founder Analytics Controls -->
+        <div class="glass-card mb-20" id="founderSection" style="display: none;">
+          <h3 class="cyan-glow">Founder Global Console</h3>
+          <p class="sub-desc">Master control across all multi-tenant institutes.</p>
+          <div class="founder-stats" id="founderStatsOverview">Loading platform telemetry...</div>
+        </div>
+
+        <button class="btn-danger-outline" id="logoutBtn">Sign Out</button>
+      </section>
+
+    </main>
+
+    <!-- Modals -->
+
+    <!-- Institute Setup Modal (First Launch) -->
+    <div class="modal-overlay" id="instituteSetupModal">
+      <div class="modal-card glass-card">
+        <h2>Setup Your Institute</h2>
+        <p class="sub-desc">Enter your coaching details to initialize your isolated cloud database.</p>
+        <form id="setupInstituteForm">
+          <div class="form-group">
+            <label>Institute / Coaching Name *</label>
+            <input type="text" id="setupInstName" class="custom-input" placeholder="e.g. Apex IIT Academy" required>
+          </div>
+          <div class="form-group">
+            <label>Owner / Director Name *</label>
+            <input type="text" id="setupOwnerName" class="custom-input" placeholder="e.g. Vikas Kushwaha" required>
+          </div>
+          <div class="form-group">
+            <label>Contact Phone Number *</label>
+            <input type="tel" id="setupPhone" class="custom-input" placeholder="10 Digit Number" pattern="[0-9]{10}" required>
+          </div>
+          <div class="form-group">
+            <label>Full Address / Location *</label>
+            <textarea id="setupAddress" class="custom-textarea" placeholder="City, State, PIN" required></textarea>
+          </div>
+          <button type="submit" class="btn-neon-action">Create Coaching Portal</button>
+        </form>
+      </div>
+    </div>
+
+    <!-- Collect Fee Modal -->
+    <div class="modal-overlay" id="collectFeeModal">
+      <div class="modal-card glass-card">
+        <div class="card-head">
+          <h2>Collect Student Fee</h2>
+          <button class="close-btn" id="closeCollectFeeModal">&times;</button>
+        </div>
+        <form id="collectFeeForm">
+          <div class="form-group">
+            <label>Select Student *</label>
+            <select id="feeStudentSelect" class="custom-select" required></select>
+          </div>
+          <div class="form-group">
+            <label>Amount (₹) *</label>
+            <input type="number" id="feeAmountInput" class="custom-input" min="1" required>
+          </div>
+          <div class="form-group">
+            <label>Month / Description *</label>
+            <input type="text" id="feeMonthInput" class="custom-input" placeholder="e.g. October 2026 Tuition" required>
+          </div>
+          <div class="form-group">
+            <label>Payment Mode *</label>
+            <select id="feeModeSelect" class="custom-select">
+              <option value="UPI">UPI (GPay / PhonePe / Paytm)</option>
+              <option value="CASH">Cash in Hand</option>
+              <option value="BANK">Bank Transfer</option>
+            </select>
+          </div>
+          <button type="submit" class="btn-neon-action">Generate Receipt & Record</button>
+        </form>
+      </div>
+    </div>
+
+    <!-- Receipt Modal / View -->
+    <div class="modal-overlay" id="receiptModal">
+      <div class="modal-card receipt-card">
+        <div class="receipt-body" id="receiptPrintArea">
+          <div class="receipt-header">
+            <h3 id="receiptInstName">VR Coaching</h3>
+            <p id="receiptInstAddress">Cloud Campus</p>
+            <div class="receipt-divider"></div>
+            <h4>FEE PAYMENT RECEIPT</h4>
+            <p class="receipt-date" id="receiptDate">Date: —</p>
+            <p class="receipt-no" id="receiptNumber">Receipt #: —</p>
+          </div>
+          <div class="receipt-grid">
+            <div><strong>Student:</strong> <span id="rcpStudent"></span></div>
+            <div><strong>Class:</strong> <span id="rcpClass"></span></div>
+            <div><strong>Roll/ID:</strong> <span id="rcpId"></span></div>
+            <div><strong>Mode:</strong> <span id="rcpMode"></span></div>
+          </div>
+          <div class="receipt-divider"></div>
+          <div class="receipt-total">
+            <span>Amount Paid:</span>
+            <span class="receipt-amount" id="rcpAmount">₹0</span>
+          </div>
+          <p class="receipt-footer">Thank you for studying with us. Generated by VR Programming SaaS.</p>
+        </div>
+        <div class="receipt-actions">
+          <button class="btn-primary-mini" onclick="window.print()">Print Receipt</button>
+          <button class="btn-danger-outline" id="closeReceiptBtn">Close</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- UPI Payment Modal -->
+    <div class="modal-overlay" id="upiPaymentModal">
+      <div class="modal-card glass-card">
+        <div class="card-head">
+          <h2>Upgrade to Unlimited</h2>
+          <button class="close-btn" id="closeUpiModal">&times;</button>
+        </div>
+        <div class="upi-instructions">
+          <p class="sub-desc">Pay ₹499 via any UPI app to unlock unlimited students and AI voice assistant.</p>
+          <div class="qr-placeholder glass-card">
+            <div class="upi-id-tag">UPI ID: <strong>vrprogramming@upi</strong></div>
+            <div class="gateway-icons">
+              <span class="upi-badge">PhonePe</span>
+              <span class="upi-badge">Google Pay</span>
+              <span class="upi-badge">Paytm</span>
+              <span class="upi-badge">BHIM</span>
+            </div>
+          </div>
+          <div class="form-group mt-15">
+            <label>12-Digit UPI Reference / UTR Number</label>
+            <input type="text" id="upiRefNumber" class="custom-input" placeholder="e.g. 4253XXXXXXXX" maxlength="16">
+          </div>
+          <button class="btn-neon-action" id="verifyUpiBtn">Verify & Activate Instant Premium</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Bottom Navigation Bar -->
+    <nav class="bottom-nav glass-card">
+      <button class="nav-btn active" data-target="view-home">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+        <span>Home</span>
+      </button>
+      <button class="nav-btn" data-target="view-students">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        <span>Students</span>
+      </button>
+      <button class="nav-btn nav-fab" data-target="view-add-student">
+        <div class="fab-circle">
+          <svg viewBo
